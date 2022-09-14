@@ -7,6 +7,7 @@ import numpy as np
 import os
 from PIL import Image
 import random
+import time
 
 # Image training data files
 directory = "data/"
@@ -52,7 +53,7 @@ def get_training_and_validation(training_count = 50000):
     return training_images, training_labels, validation_images, validation_labels
 
 def get_training_and_testing(split = 0.5):
-    assert 0 < split < 1, "split must be between 0 and 1"
+    assert 0.1 <= split <= .9, "split must be between 0 and 1"
     images = get_images_array(directory + training_images_filename)
     labels = get_labels(directory + training_labels_filename)
     test_images = get_images_array(directory + testing_images_filename)
@@ -62,6 +63,8 @@ def get_training_and_testing(split = 0.5):
     images_and_labels = list(zip(images, labels))
     random.shuffle(images_and_labels) # Randomize the images and labels
     images, labels = zip(*images_and_labels) 
+    images = np.array(images)
+    labels = np.array(labels)
     n = round(len(images) * split)
     training_images, training_labels = images[:n], labels[:n]
     testing_images, testing_labels = images[n:], labels[n:]
@@ -85,6 +88,10 @@ def read_bytes(filename):
         file_bytes = f.read()
         return file_bytes
 
+def organize_labels(images, labels):
+    assert len(images) == len(labels), "images and labels must be the same size"
+    return sorted(zip(images, labels), key=lambda t: np.argmax(t[1]))
+
 def get_averages(images, labels):
     """
     Determine the average templates for each label
@@ -106,6 +113,63 @@ def get_image(array):
     img = Image.fromarray(np.array((255 * array).reshape(28, 28), 
         dtype=np.uint8), mode="L")
     return img
+def euclidean(u, v):
+    assert type(u) is np.ndarray, "var u must be an ndarray"
+    assert type(v) is np.ndarray, "var v must be an ndarray"
+    return np.linalg.norm(u - v, axis=1)
+def manhattan(u, v):
+    """
+    Sum the absolute difference of the vector components of u and v
+    """
+    assert type(u) is np.ndarray, "var u must be an ndarray"
+    assert type(v) is np.ndarray, "var v must be an ndarray"
+    return np.sum(np.abs(u - v), axis=1)
+def cosine(u, v):
+    assert type(u) is np.ndarray, "var u must be an ndarray"
+    assert type(v) is np.ndarray, "var v must be an ndarray"
+    if u.shape == v.shape and len(u.shape) == 1:
+        return np.dot(u, v) / np.linalg.norm(u) / np.linalg.norm(v)
+    elif len(u.shape) == 1 and len(v.shape) == 2 and v.shape[1] == u.shape[0]:
+        return np.dot(v, u) / np.linalg.norm(v, axis=1) / np.linalg.norm(u)
+    elif len(u.shape) == 2 and len(v.shape) == 1 and v.shape[0] == u.shape[1]:
+        return np.dot(u, v) / np.linalg.norm(u, axis=1) / np.linalg.norm(v)
+    else:
+        return u.dot(v)
+
+def get_partition_indices(zipped_sorted):
+    """
+    This takes a sorted data set zipped with the corresponding labels and 
+    finds the indices bounding each partition
+    """
+    prev = 0
+    indices = dict()
+    for i, (image, one_hot) in enumerate(zipped_sorted):
+        label = np.argmax(one_hot)
+        assert label >= prev, "data needs to be sorted"
+        if not indices.get(label):
+            indices[label] = [i]
+        if label > prev:
+            prev = label
+            indices[label - 1].append(i)
+    indices[label].append(i)
+    return indices
+def get_closest_to_average(images, labels):
+    """
+    :return: the images closest to the averages using euclidean, manhattan, and
+    cosine distance metrics.
+    """
+    averages = get_averages(images, labels)
+    closest = []
+    start = time.time()
+    for label in averages:
+        avg_pixels = averages[label][0]
+        eucl_min = images[np.argmin(euclidean(avg_pixels, images))]
+        manh_min = images[np.argmin(manhattan(avg_pixels, images))]
+        cos_min = images[np.argmax(cosine(avg_pixels, images))]
+        closest.extend([(label, (eucl_min, manh_min, cos_min))])
+    print("Closest to average calculation duration: %.2f s" % (time.time() - start))
+    return closest
+
 def save_averages(avg_dict, partition_name: str) -> None:
     """
     :param avg_dict: dictionary of labels and their averages
@@ -114,12 +178,22 @@ def save_averages(avg_dict, partition_name: str) -> None:
     """
     for label in avg_dict:
         img = get_image(avg_dict[label][0])
-        img.save("data/{}_{}_avg.png".format(label, partition_name))
+        img.save("images/{}_{}_avg.png".format(label, partition_name))
+
+def save_closest(closest, partition_name: str):
+    for item in closest:
+        label, triplet = item
+        for typ, val in zip(["euclidean", "manhattan", "cosine"], triplet):
+            img = get_image(val)
+            img.save("images/{}_{}_{}_min.png".format(label, partition_name, typ))
+
 if __name__ == "__main__":
     training_images, training_labels, testing_images, testing_labels = get_training_and_testing()
     training_averages = get_averages(training_images, training_labels)
     testing_averages = get_averages(testing_images, testing_labels)
     save_averages(training_averages, "train")
     save_averages(testing_averages, "test")
-
-    img = get_image(training_images[0])
+    training_closest = get_closest_to_average(training_images, training_labels)
+    testing_closest = get_closest_to_average(testing_images, testing_labels)
+    save_closest(training_closest, "train")
+    save_closest(testing_closest, "test")
