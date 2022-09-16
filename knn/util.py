@@ -121,6 +121,19 @@ def get_confusion_matrix(actual, pred):
         
     return matrix
             
+def visual_conf_mtrx(data): #visualizes confusion matrix, very basic as of now
+
+    confmtrx = plt.imshow(data , cmap = 'autumn')
+    plt.title( "predicted (y) vs actual (x)\n\n" )
+    
+    for y in range(data.shape[0]):
+        for x in range(data.shape[1]):
+            plt.text(x , y , data[y, x]) 
+    plt.axis('off')
+    plt.show()
+   
+ 
+
 def get_dist_predictions(centroids, attrs, labels):
     eucl_pred = classify_k_means(centroids, attrs, euclidean, True)
     manh_pred = classify_k_means(centroids, attrs, manhattan, True)
@@ -139,3 +152,19 @@ def get_accuracy(pred, actual):
             count = cout + 1
 
     return count/len(pred)
+
+
+def get_MNIST_label(label):
+    return np.argmax(label)
+
+def get_iris_label(label):
+    if(label == 'Iris-setosa'):
+        return 0
+
+    if(label == 'Iris-versicolor'):
+        return 1
+
+    if(label == 'Iris-virginica'):
+        return 2
+
+    return -1
