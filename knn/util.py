@@ -78,13 +78,14 @@ def classify_k_means(centroids, attrs, dist, is_min=True):
     else:
         return centroid_labels[np.argmax(distances, axis=0)]
 
-
-def get_confusion_matrix(actual, pred):#NOTE: this will only work if pred and actual have the same data types
+#NOTE: This REQUIRES that both arrays be in the form that all labels are numbers, not strings.
+#It also REQUIRES that labels be all numbers starting at 0 and up to n, skipping none on the way. 
+def get_confusion_matrix(actual, pred):
     assert len(pred) == len(actual), "passed vectors must be same len"
 
     lc = len(set(actual)) #make count of labels
     matrix  = np.zeros((lc, lc))
-    
+
     for i in range(0, len(actual)):
         matrix[actual[i]][pred[i]] = matrix[actual[i]][pred[i]] + 1
         
