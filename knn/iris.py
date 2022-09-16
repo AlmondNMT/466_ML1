@@ -43,7 +43,6 @@ def get_train_test_split(split: float):
     return train_attrs, train_labels, test_attrs, test_labels
 
 
-
 if __name__ == "__main__":
     train_attrs, train_labels, test_attrs, test_labels = get_train_test_split(0.5)
     train_avgs = get_averages(train_attrs, train_labels) # Problem 6
@@ -58,3 +57,4 @@ if __name__ == "__main__":
             label_indices = np.where(kmeans.labels_ == j)[0]
             cluster_label = get_mode(train_labels[label_indices])
             centroids.append((kmeans.cluster_centers_[j], cluster_label))
+        

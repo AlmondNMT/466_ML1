@@ -52,23 +52,44 @@ def cosine(u, v):
     else:
         return u.dot(v)
 
-def classify_k_means(attrs, centroids, dist, is_min=True):
+def classify_k_means(centroids, attrs, dist, is_min=True):
     """
     :param attrs: feature vectors 
     :param centroids: list of 2-tuples of k-means centroids and their 
         corresponding labels based on voting
     :param dist: distance function
     :param is_min: boolean to determine whether to search for min or max value
-        of distance metric
+        of the given distance metric
     :return: vector of predicted labels for feature vectors
     """
     assert callable(dist), "dist must be a function"
     index = 0 # Index of the minimum distance
     centroid, label = centroids[0]
-    val = dist(centroid, attrs)
-    label_vector = val
-    for i in range(1, len(centroids)):
-        centroid, label = centroids[i]
-        new_val = dist(centroid, attrs)
-        if is_min:
-            pass
+    distances = []
+    centroid_labels = []
+    for centroid, label in centroids:
+        distances.append(dist(centroid, attrs))
+        centroid_labels.append(label)
+    distances = np.array(distances)
+    centroid_labels = np.array(centroid_labels)
+    if is_min:
+        return centroid_labels[np.argmin(distances, axis=0)]
+    else:
+        return centroid_labels[np.argmax(distances, axis=0)]
+
+def get_confusion_matrix(pred, actual):
+    assert len(pred) == len(actual), "predicted and actual must be same len"
+    conf = dict()
+    for i, label in enumerate(pred):
+        pass
+    
+
+def get_dist_predictions(centroids, attrs, labels):
+    eucl_pred = classify_k_means(centroids, attrs, euclidean, True)
+    manh_pred = classify_k_means(centroids, attrs, manhattan, True)
+    cos_pred = classify_k_means(centroids, attrs, cosine, False)
+    eucl_conf = get_confusion_matrix(eucl_pred, labels)
+    manh_conf = get_confusion_matrix(eucl_pred, labels)
+    cos_conf = get_confusion_matrix(cos_pred, labels)
+
+    return eucl_pred, manh_pred, cos_pred
