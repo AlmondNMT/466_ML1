@@ -50,9 +50,12 @@ def test_vis_conf_mtrx():
     visual_conf_mtrx(data)
 
 
+def test_get_mnist_lbl():
+    print(get_MNIST_label([0,0,0,1,0,0]))
+    print(get_MNIST_label([0,1,0,0,0,0]))
+
+
 
 if __name__ == "__main__":
-    print("testing visualization of conf matrx")
-    test_vis_conf_mtrx()
-    print("flush")
-        
+    test_get_mnist_lbl()
+

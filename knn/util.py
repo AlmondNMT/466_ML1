@@ -142,3 +142,7 @@ def get_accuracy(pred, actual):
             count = cout + 1
 
     return count/len(pred)
+
+
+def get_MNIST_label(label):
+    return np.argmax(label)
