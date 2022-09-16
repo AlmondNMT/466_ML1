@@ -87,13 +87,10 @@ def get_confusion_matrix(actual, pred):
     matrix  = np.zeros((lc, lc))
 
     for i in range(0, len(actual)):
-        matrix[actual[i]][pred[i]] = matrix[actual[i]][pred[i]] + 1
+        matrix[actual[i]][pred[i]] += 1
         
     return matrix
             
-    
-
-
 
 def get_dist_predictions(centroids, attrs, labels):
     eucl_pred = classify_k_means(centroids, attrs, euclidean, True)
