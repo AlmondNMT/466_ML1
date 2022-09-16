@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import matplotlib.pyplot as plt
 import numpy as np
 import random
@@ -64,3 +65,8 @@ if __name__ == "__main__":
             cluster_label = get_mode(train_labels[label_indices])
             centroids.append((kmeans.cluster_centers_[j], cluster_label))
         
+=======
+from iris import *
+from mnist import *
+from util import *
+>>>>>>> cf29be6adb4778c3f20ad6dba327a83e89d10008
