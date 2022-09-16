@@ -8,6 +8,7 @@ import os
 from PIL import Image
 import random
 import time
+from util import *
 
 # Image training data files
 directory = "data/"
@@ -92,19 +93,6 @@ def organize_labels(images, labels):
     assert len(images) == len(labels), "images and labels must be the same size"
     return sorted(zip(images, labels), key=lambda t: np.argmax(t[1]))
 
-def get_averages(images, labels):
-    """
-    Determine the average templates for each label
-    """
-    averages = dict()
-    for pixels, one_hot in zip(images, labels):
-        label = np.argmax(one_hot)
-        if not averages.get(label):
-            averages[label] = (pixels, 1)
-            continue
-        avg, count = averages[label]
-        averages[label] = ((avg * count + pixels) / (count + 1), count + 1)
-    return averages
 def get_image(array):
     """
     pass a flat image pixel array and display the image
@@ -113,28 +101,6 @@ def get_image(array):
     img = Image.fromarray(np.array((255 * array).reshape(28, 28), 
         dtype=np.uint8), mode="L")
     return img
-def euclidean(u, v):
-    assert type(u) is np.ndarray, "var u must be an ndarray"
-    assert type(v) is np.ndarray, "var v must be an ndarray"
-    return np.linalg.norm(u - v, axis=1)
-def manhattan(u, v):
-    """
-    Sum the absolute difference of the vector components of u and v
-    """
-    assert type(u) is np.ndarray, "var u must be an ndarray"
-    assert type(v) is np.ndarray, "var v must be an ndarray"
-    return np.sum(np.abs(u - v), axis=1)
-def cosine(u, v):
-    assert type(u) is np.ndarray, "var u must be an ndarray"
-    assert type(v) is np.ndarray, "var v must be an ndarray"
-    if u.shape == v.shape and len(u.shape) == 1:
-        return np.dot(u, v) / np.linalg.norm(u) / np.linalg.norm(v)
-    elif len(u.shape) == 1 and len(v.shape) == 2 and v.shape[1] == u.shape[0]:
-        return np.dot(v, u) / np.linalg.norm(v, axis=1) / np.linalg.norm(u)
-    elif len(u.shape) == 2 and len(v.shape) == 1 and v.shape[0] == u.shape[1]:
-        return np.dot(u, v) / np.linalg.norm(u, axis=1) / np.linalg.norm(v)
-    else:
-        return u.dot(v)
 
 def get_partition_indices(zipped_sorted):
     """
@@ -193,7 +159,3 @@ if __name__ == "__main__":
     testing_averages = get_averages(testing_images, testing_labels)
     save_averages(training_averages, "train")
     save_averages(testing_averages, "test")
-    training_closest = get_closest_to_average(training_images, training_labels)
-    testing_closest = get_closest_to_average(testing_images, testing_labels)
-    save_closest(training_closest, "train")
-    save_closest(testing_closest, "test")
