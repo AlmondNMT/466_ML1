@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import random
+from iris import read_iris
+
 from util import *
 
 """
@@ -54,8 +56,12 @@ def test_get_mnist_lbl():
     print(get_MNIST_label([0,0,0,1,0,0]))
     print(get_MNIST_label([0,1,0,0,0,0]))
 
+def test_get_iris_lbl():
+    print(get_iris_label('Iris-setosa'))
+    print(get_iris_label('Iris-virginica'))
+    print(get_iris_label('Iris-versicolor'))
+    print(get_iris_label('Iris-unknows'))
 
 
 if __name__ == "__main__":
-    test_get_mnist_lbl()
-
+    test_get_iris_lbl()

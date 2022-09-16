@@ -146,3 +146,15 @@ def get_accuracy(pred, actual):
 
 def get_MNIST_label(label):
     return np.argmax(label)
+
+def get_iris_label(label):
+    if(label == 'Iris-setosa'):
+        return 0
+
+    if(label == 'Iris-versicolor'):
+        return 1
+
+    if(label == 'Iris-virginica'):
+        return 2
+
+    return -1
