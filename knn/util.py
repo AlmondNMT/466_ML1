@@ -95,8 +95,9 @@ def get_dist_predictions(centroids, attrs, labels):
     return eucl_pred, manh_pred, cos_pred
 
 def get_accuracy(pred, actual):
-    truecount = 0
-    for i in range(0, len(pred)-1):
+    assert (len(pred)==len(actual)), "err get_accuracy: passed vectors need same length"
+    counter = 0
+    for i in range(0, len(pred)):
         if(pred[i]==actual[i]):
             counter = counter + 1
 
