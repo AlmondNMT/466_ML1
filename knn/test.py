@@ -43,18 +43,16 @@ def get_train_test_split(split: float):
     return train_attrs, train_labels, test_attrs, test_labels
 
 
+def test_vis_conf_mtrx():
+    act =  [0,1,2,0,1,2,0,1,2,2]
+    pred = [0,1,1,0,1,1,0,1,2,2]
+    data = get_confusion_matrix(act, pred)
+    visual_conf_mtrx(data)
+
+
+
 if __name__ == "__main__":
-    train_attrs, train_labels, test_attrs, test_labels = get_train_test_split(0.5)
-    train_avgs = get_averages(train_attrs, train_labels) # Problem 6
-    test_avgs = get_averages(test_attrs, test_labels) # Problem 6
-    ks = []
-    for k in range(1, 2 + 1):
-        ks.append(k)
-        kmeans = KMeans(n_clusters=k)
-        kmeans.fit(train_attrs)
-        centroids = []
-        for j in range(0, k):
-            label_indices = np.where(kmeans.labels_ == j)[0]
-            cluster_label = get_mode(train_labels[label_indices])
-            centroids.append((kmeans.cluster_centers_[j], cluster_label))
+    print("testing visualization of conf matrx")
+    test_vis_conf_mtrx()
+    print("flush")
         
