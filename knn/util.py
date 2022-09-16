@@ -51,3 +51,24 @@ def cosine(u, v):
         return np.dot(u, v) / np.linalg.norm(u, axis=1) / np.linalg.norm(v)
     else:
         return u.dot(v)
+
+def classify_k_means(attrs, centroids, dist, is_min=True):
+    """
+    :param attrs: feature vectors 
+    :param centroids: list of 2-tuples of k-means centroids and their 
+        corresponding labels based on voting
+    :param dist: distance function
+    :param is_min: boolean to determine whether to search for min or max value
+        of distance metric
+    :return: vector of predicted labels for feature vectors
+    """
+    assert callable(dist), "dist must be a function"
+    index = 0 # Index of the minimum distance
+    centroid, label = centroids[0]
+    val = dist(centroid, attrs)
+    label_vector = val
+    for i in range(1, len(centroids)):
+        centroid, label = centroids[i]
+        new_val = dist(centroid, attrs)
+        if is_min:
+            pass
