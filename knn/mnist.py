@@ -62,8 +62,10 @@ def read_mnist():
     labels += test_labels
     return images, labels
 
-# Get the labels corresponding to the images 
 def get_labels(label_filename):
+    """ 
+    Get image labels
+    """
     label_bytes = read_bytes(label_filename)
     num_labels = bytes_to_int(label_bytes[4 : 8])
     labels = [[0 for i in range(10)] for j in range(num_labels)]
@@ -110,3 +112,4 @@ if __name__ == "__main__":
     testing_averages = get_averages(testing_images, testing_labels)
     save_averages(training_averages, "train")
     save_averages(testing_averages, "test")
+    

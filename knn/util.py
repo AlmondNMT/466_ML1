@@ -1,10 +1,17 @@
 from sklearn.cluster import KMeans
+from sklearn.preprocessing import LabelBinarizer
+from sklearn.preprocessing import LabelEncoder
 import numpy as np
 import matplotlib.pyplot as plt
 import random
 """
 Useful functions shared by MNIST and Iris datasets
 """
+
+def encode_labels(labels):
+    le = LabelEncoder()
+    new_labels = le.fit_transform(labels)
+    return new_labels, le
 
 def get_train_test_split(attrs, labels, split = 0.5):
     """
@@ -26,9 +33,12 @@ def get_averages(feature_set, labels):
     """
     Determine the average templates for each label
     """
+    assert type(labels) is np.ndarray, "labels must be numpy ndarray"
+    assert type(feature_set) is np.ndarray, "feature_set must be numpy ndarray"
+    if len(labels.shape) == 2:
+        labels = np.argmax(labels, axis=1)
     averages = dict()
-    for features, one_hot in zip(feature_set, labels):
-        label = np.argmax(one_hot)
+    for features, label in zip(feature_set, labels):
         if not averages.get(label):
             averages[label] = (features, 1)
             continue
@@ -158,5 +168,3 @@ def get_iris_label(label):
         return 2
 
     return -1
-
-
