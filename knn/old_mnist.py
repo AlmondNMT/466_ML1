@@ -53,14 +53,23 @@ def get_training_and_validation(training_count = 50000):
     validation_labels = labels[training_count : 60000]
     return training_images, training_labels, validation_images, validation_labels
 
-def read_mnist():
+def get_training_and_testing(split = 0.5):
+    assert 0.1 <= split <= .9, "split must be between 0 and 1"
     images = get_images_array(directory + training_images_filename)
     labels = get_labels(directory + training_labels_filename)
     test_images = get_images_array(directory + testing_images_filename)
     test_labels = get_labels(directory + testing_labels_filename)
     images += test_images
     labels += test_labels
-    return images, labels
+    images_and_labels = list(zip(images, labels))
+    random.shuffle(images_and_labels) # Randomize the images and labels
+    images, labels = zip(*images_and_labels) 
+    images = np.array(images)
+    labels = np.array(labels)
+    n = round(len(images) * split)
+    training_images, training_labels = images[:n], labels[:n]
+    testing_images, testing_labels = images[n:], labels[n:]
+    return training_images, training_labels, testing_images, testing_labels
 
 # Get the labels corresponding to the images 
 def get_labels(label_filename):
@@ -93,6 +102,41 @@ def get_image(array):
         dtype=np.uint8), mode="L")
     return img
 
+def get_partition_indices(zipped_sorted):
+    """
+    This takes a sorted data set zipped with the corresponding labels and 
+    finds the indices bounding each partition
+    """
+    prev = 0
+    indices = dict()
+    for i, (image, one_hot) in enumerate(zipped_sorted):
+        label = np.argmax(one_hot)
+        assert label >= prev, "data needs to be sorted"
+        if not indices.get(label):
+            indices[label] = [i]
+        if label > prev:
+            prev = label
+            indices[label - 1].append(i)
+    indices[label].append(i)
+    return indices
+
+def get_closest_to_average(images, labels):
+    """
+    :return: the images closest to the averages using euclidean, manhattan, and
+    cosine distance metrics.
+    """
+    averages = get_averages(images, labels)
+    closest = []
+    start = time.time()
+    for label in averages:
+        avg_pixels = averages[label][0]
+        eucl_min = images[np.argmin(euclidean(avg_pixels, images))]
+        manh_min = images[np.argmin(manhattan(avg_pixels, images))]
+        cos_min = images[np.argmax(cosine(avg_pixels, images))]
+        closest.extend([(label, (eucl_min, manh_min, cos_min))])
+    print("Closest to average calculation duration: %.2f s" % (time.time() - start))
+    return closest
+
 def save_averages(avg_dict, partition_name: str) -> None:
     """
     :param avg_dict: dictionary of labels and their averages
@@ -103,9 +147,15 @@ def save_averages(avg_dict, partition_name: str) -> None:
         img = get_image(avg_dict[label][0])
         img.save("images/{}_{}_avg.png".format(label, partition_name))
 
+def save_closest(closest, partition_name: str):
+    for item in closest:
+        label, triplet = item
+        for typ, val in zip(["euclidean", "manhattan", "cosine"], triplet):
+            img = get_image(val)
+            img.save("images/{}_{}_{}_min.png".format(label, partition_name, typ))
+
 if __name__ == "__main__":
-    images, labels = read_mnist()
-    training_images, training_labels, testing_images, testing_labels = get_train_test_split(images, labels, split=0.5)
+    training_images, training_labels, testing_images, testing_labels = get_training_and_testing()
     training_averages = get_averages(training_images, training_labels)
     testing_averages = get_averages(testing_images, testing_labels)
     save_averages(training_averages, "train")
