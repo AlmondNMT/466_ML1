@@ -1,5 +1,6 @@
 from sklearn.cluster import KMeans
 import numpy as np
+import matplotlib.pyplot as plt
 
 def get_averages(feature_set, labels):
     """
@@ -77,12 +78,21 @@ def classify_k_means(centroids, attrs, dist, is_min=True):
     else:
         return centroid_labels[np.argmax(distances, axis=0)]
 
-def get_confusion_matrix(pred, actual):
-    assert len(pred) == len(actual), "predicted and actual must be same len"
-    conf = dict()
-    for i, label in enumerate(pred):
-        pass
+
+def get_confusion_matrix(actual, pred):#NOTE: this will only work if pred and actual have the same data types
+    assert len(pred) == len(actual), "passed vectors must be same len"
+
+    lc = len(set(actual)) #make count of labels
+    matrix  = np.zeros((lc, lc))
     
+    for i in range(0, len(actual)):
+        matrix[actual[i]][pred[i]] = matrix[actual[i]][pred[i]] + 1
+        
+    return matrix
+            
+    
+
+
 
 def get_dist_predictions(centroids, attrs, labels):
     eucl_pred = classify_k_means(centroids, attrs, euclidean, True)
