@@ -96,9 +96,9 @@ def get_dist_predictions(centroids, attrs, labels):
 
 def get_accuracy(pred, actual):
     assert (len(pred)==len(actual)), "err get_accuracy: passed vectors need same length"
-    counter = 0
+    count = 0
     for i in range(0, len(pred)):
         if(pred[i]==actual[i]):
-            counter = counter + 1
+            count = cout + 1
 
-    return counter/len(pred)
+    return count/len(pred)
