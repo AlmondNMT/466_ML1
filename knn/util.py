@@ -168,3 +168,15 @@ def get_iris_label(label):
         return 2
 
     return -1
+
+def get_iris_label_string(label):
+    if(label == 0):
+        return 'Iris-setosa'
+
+    if(label == 1):
+        return 'Iris-versicolor'
+
+    if(label == 2):
+        return 'Iris-virginica'
+
+    return -1
