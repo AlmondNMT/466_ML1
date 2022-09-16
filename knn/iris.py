@@ -9,7 +9,7 @@ sepal length, sepal width, petal length, petal width
 """
 random.seed(1)
 
-def read_csv():
+def read_iris():
     """
     Pull csv data from data/iris.data
     """
@@ -25,26 +25,9 @@ def read_csv():
             labels.append(label)
         return np.array(attributes), np.array(labels)
 
-def get_train_test_split(split: float):
-    """
-    :param split: float between .1 and .9 which determines 
-    how much training data to use 
-    """
-    assert 0.1 <= split <= 0.9
-    attrs, labels = read_csv()
-    combined = list(zip(attrs, labels))
-    random.shuffle(combined)
-    n = round(split * len(combined))
-    attrs, labels = zip(*combined)
-    train_attrs = np.array(attrs[:n])
-    train_labels = np.array(labels[:n])
-    test_attrs = np.array(attrs[n:])
-    test_labels = np.array(labels[n:])
-    return train_attrs, train_labels, test_attrs, test_labels
-
-
 if __name__ == "__main__":
-    train_attrs, train_labels, test_attrs, test_labels = get_train_test_split(0.5)
+    attrs, labels = read_iris()
+    train_attrs, train_labels, test_attrs, test_labels = get_train_test_split(attrs, labels, 0.5)
     train_avgs = get_averages(train_attrs, train_labels) # Problem 6
     test_avgs = get_averages(test_attrs, test_labels) # Problem 6
     ks = []
@@ -57,4 +40,5 @@ if __name__ == "__main__":
             label_indices = np.where(kmeans.labels_ == j)[0]
             cluster_label = get_mode(train_labels[label_indices])
             centroids.append((kmeans.cluster_centers_[j], cluster_label))
+            
         

@@ -1,6 +1,26 @@
 from sklearn.cluster import KMeans
 import numpy as np
 import matplotlib.pyplot as plt
+import random
+"""
+Useful functions shared by MNIST and Iris datasets
+"""
+
+def get_train_test_split(attrs, labels, split = 0.5):
+    """
+    :param split: float between .1 and .9 which determines
+    how much training data to use
+    """
+    assert 0.1 <= split <= 0.9
+    combined = list(zip(attrs, labels))
+    random.shuffle(combined)
+    n = round(split * len(combined))
+    attrs, labels = zip(*combined)
+    train_attrs = np.array(attrs[:n])
+    train_labels = np.array(labels[:n])
+    test_attrs = np.array(attrs[n:])
+    test_labels = np.array(labels[n:])
+    return train_attrs, train_labels, test_attrs, test_labels
 
 def get_averages(feature_set, labels):
     """
@@ -74,9 +94,9 @@ def classify_k_means(centroids, attrs, dist, is_min=True):
     distances = np.array(distances)
     centroid_labels = np.array(centroid_labels)
     if is_min:
-        return centroid_labels[np.argmin(distances, axis=0)]
+        return np.argmin(distances, axis=0)
     else:
-        return centroid_labels[np.argmax(distances, axis=0)]
+        return np.argmax(distances, axis=0)
 
 #NOTE: This REQUIRES that both arrays be in the form that all labels are numbers, not strings.
 #It also REQUIRES that labels be all numbers starting at 0 and up to n, skipping none on the way. 
