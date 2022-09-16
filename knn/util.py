@@ -91,6 +91,18 @@ def get_confusion_matrix(actual, pred):
         
     return matrix
             
+def visual_conf_mtrx(data): #visualizes confusion matrix, very basic as of now
+
+    confmtrx = plt.imshow(data , cmap = 'autumn')
+    plt.title( "predicted (y) vs actual (x)\n\n" )
+    
+    for y in range(data.shape[0]):
+        for x in range(data.shape[1]):
+            plt.text(x , y , data[y, x]) 
+    plt.axis('off')
+    plt.show()
+   
+ 
 
 def get_dist_predictions(centroids, attrs, labels):
     eucl_pred = classify_k_means(centroids, attrs, euclidean, True)
