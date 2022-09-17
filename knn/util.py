@@ -83,7 +83,7 @@ def cosine(u, v):
     else:
         return u.dot(v)
 
-def classify_k_means(centroids, attrs, dist, is_min=True):
+def predict_by_centroids(centroids, attrs, dist, is_min=True):
     """
     This is essentially the min-distance classification algo.
     :param attrs: feature vectors 
@@ -113,7 +113,7 @@ def classify_k_means(centroids, attrs, dist, is_min=True):
 def avg_to_centroid(averages):
     """
     Take the average value obtained from get averages and convert it into the 
-    form needed for classify_k_means, i.e. [(average, label), ...]
+    form needed for predict_by_centroids, i.e. [(average, label), ...]
     """
     assert type(averages) is dict
     centroids = []
@@ -154,7 +154,7 @@ def get_dist_predictions(averages, attrs, labels):
     distances = [euclidean, manhattan, cosine]
     minimize_bools = [True, True, False]
     for i, dist in enumerate(distances):
-        predictions.append(classify_k_means(centroids, attrs, dist, minimize_bools[i]))
+        predictions.append(predict_by_centroids(centroids, attrs, dist, minimize_bools[i]))
         accuracies.append(get_accuracy(predictions[i], labels))
         confusion_matrices.append(get_confusion_matrix(predictions[i], labels))
     return predictions, accuracies, confusion_matrices
@@ -163,14 +163,14 @@ def get_accuracy(pred, actual):
     assert (len(pred)==len(actual)), "err get_accuracy: passed vectors need same length"
     count = 0
     for i in range(0, len(pred)):
-        if(pred[i]==actual[i]):
+        if np.array_equal(pred[i], actual[i]): # More general equality for multiple types, including arrays, floats, str, etc.
             count = count + 1
 
     return count/len(pred)
 
 
 def get_MNIST_label(label):
-    return np.argmax(label)
+    return np.argmax(label, axis=1)
 
 def get_iris_label(label):
     if(label == 'Iris-setosa'):
