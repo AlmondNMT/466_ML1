@@ -43,10 +43,4 @@ if __name__ == "__main__":
             centroids.append((kmeans.cluster_centers_[j], cluster_label))
 
         labeled_data = predict_by_centroids(centroids, train_attrs, euclidean)
-        print("PREDICTION")
-        print(labeled_data)
-        accur = get_accuracy(labeled_data, train_labels)
-        print("FOR ACTUAL LABELS")
-        print(train_labels)
-        print("PERCENT")
-        print(accur)
+        pred, acc, conf = get_dist_predictions(train_avgs, train_attrs, train_labels)

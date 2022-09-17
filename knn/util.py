@@ -124,6 +124,7 @@ def avg_to_centroid(averages):
 #It also REQUIRES that labels be all numbers starting at 0 and up to n, skipping none on the way. 
 def get_confusion_matrix(actual, pred):
     assert len(pred) == len(actual), "passed vectors must be same len"
+    print(actual)
     lc = len(set(actual)) #make count of labels
     matrix  = np.zeros((lc, lc))
     for i in range(0, len(actual)):
@@ -142,17 +143,22 @@ def visual_conf_mtrx(data): #visualizes confusion matrix, very basic as of now
     plt.show()
    
  
-def get_dist_predictions(averages, attrs, labels):
+def get_dist_predictions(averages, attrs, labels, is_iris=True):
     centroids = avg_to_centroid(averages)
     predictions = []
     accuracies = []
     confusion_matrices = []
     distances = [euclidean, manhattan, cosine]
     minimize_bools = [True, True, False]
+            
     for i, dist in enumerate(distances):
         predictions.append(predict_by_centroids(centroids, attrs, dist, minimize_bools[i]))
+        if is_iris:
+            for j in range(len(labels)):
+                labels[j] = get_iris_label(labels[j])
+                predictions[i][j] = get_iris_label(predictions[i][j])
         accuracies.append(get_accuracy(predictions[i], labels))
-        confusion_matrices.append(get_confusion_matrix(predictions[i], labels))
+        confusion_matrices.append(get_confusion_matrix(labels, predictions[i]))
     return predictions, accuracies, confusion_matrices
 
 def get_accuracy(pred, actual):
