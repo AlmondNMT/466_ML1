@@ -27,4 +27,5 @@ def read_iris():
         return np.array(attributes), np.array(labels)
 
 if __name__ == "__main__":
-    kmeans_loop(read_iris, euclidean, "iris", "euclidean")
+    #kmeans_loop(read_iris, euclidean, "iris", "euclidean")
+    train_pred, train_labels, test_pred, test_labels = min_dist(read_iris, euclidean, True)

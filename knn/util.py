@@ -229,3 +229,18 @@ def kmeans_loop(get_data_func, dist_func, ds_name, func_name, is_min=True):
     ax.plot(ks, train_acc, color="r")
     ax.plot(ks, test_acc, color="b")
     fig.savefig("images/elbow_map_kmeans_{}_{}.png".format(ds_name, func_name))
+
+def min_dist(get_data_func, dist_func, is_min=True):
+    attrs, labels = get_data_func()
+    train_attrs, train_labels, test_attrs, test_labels = get_train_test_split(attrs, labels, 0.5)
+    train_avg = get_averages(train_attrs, train_labels)
+    test_avg = get_averages(test_attrs, test_labels)
+    train_centroids = avg_to_centroid(train_avg)
+    test_centroids = avg_to_centroid(test_avg)
+    train_pred = predict_by_centroids(train_centroids, train_attrs, dist_func, is_min)
+    test_pred = predict_by_centroids(test_centroids, test_attrs, dist_func, is_min)
+    train_acc = get_accuracy(train_pred, train_labels)
+    test_acc = get_accuracy(test_pred, test_labels)
+    print(train_acc)
+    print(test_acc)
+    return train_pred, train_labels, test_pred, test_labels

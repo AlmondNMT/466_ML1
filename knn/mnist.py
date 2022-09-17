@@ -107,6 +107,4 @@ def save_averages(avg_dict, partition_name: str) -> None:
 
 
 if __name__ == "__main__":
-    kmeans_loop(read_mnist, euclidean, "mnist", "euclidean", True)
-    # Test
-    
+    train_pred, train_labels, test_pred, test_labels = min_dist(read_mnist, euclidean, True)
