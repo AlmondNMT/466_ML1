@@ -60,7 +60,7 @@ def read_mnist():
     test_labels = get_labels(directory + testing_labels_filename)
     images += test_images
     labels += test_labels
-    return images, labels
+    return np.array(images), np.argmax(labels, axis=1)
 
 def get_labels(label_filename):
     """ 
@@ -107,5 +107,6 @@ def save_averages(avg_dict, partition_name: str) -> None:
 
 
 if __name__ == "__main__":
-    images, labels = read_mnist()
-    training_images, training_labels, testing_images, testing_labels = get_train_test_split(images, labels, split=0.5)
+    kmeans_loop(read_mnist, euclidean, "mnist", "euclidean", True)
+    # Test
+    

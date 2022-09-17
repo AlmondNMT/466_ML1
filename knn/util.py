@@ -4,6 +4,7 @@ from sklearn.preprocessing import LabelEncoder
 import numpy as np
 import matplotlib.pyplot as plt
 import random
+import time
 """
 Useful functions shared by MNIST and Iris datasets
 """
@@ -188,3 +189,43 @@ def get_iris_label_string(label):
         return 'Iris-virginica'
     return -1
 
+
+def kmeans_loop(get_data_func, dist_func, ds_name, func_name, is_min=True):
+    attrs, labels = get_data_func()
+    train_attrs, train_labels, test_attrs, test_labels = get_train_test_split(attrs, labels, 0.5)
+    start = time.time()
+    train_avgs = get_averages(train_attrs, train_labels) # Problem 6
+    print(time.time() - start)
+    test_avgs = get_averages(test_attrs, test_labels) # Problem 6
+    ks = []
+    train_acc = []
+    test_acc = []
+    for k in range(1, 15 + 1):
+        ks.append(k)
+        kmeans_train = KMeans(n_clusters=k, max_iter=30)
+        start = time.time()
+        kmeans_train.fit(train_attrs)
+        print("training time: %.f" % (time.time() - start))
+        kmeans_test = KMeans(n_clusters=k, max_iter=30)
+        kmeans_test.fit(test_attrs)
+        centroids_train = []
+        centroids_test = []
+        for j in range(0, k):
+            label_indices = np.where(kmeans_train.labels_ == j)[0]
+            cluster_label = get_mode(train_labels[label_indices])
+            centroids_train.append((kmeans_train.cluster_centers_[j], cluster_label))
+            label_indices = np.where(kmeans_test.labels_ == j)[0]
+            cluster_label = get_mode(test_labels[label_indices])
+            centroids_test.append((kmeans_test.cluster_centers_[j], cluster_label))
+
+        start = time.time()
+        train_pred = predict_by_centroids(centroids_train, train_attrs, dist_func, is_min)
+        print("train_pred: %.2f" % (time.time() - start))
+        test_pred = predict_by_centroids(centroids_test, test_attrs, dist_func, is_min)
+        train_acc.append(get_accuracy(train_pred, train_labels))
+        test_acc.append(get_accuracy(test_pred, test_labels))
+
+    fig, ax = plt.subplots()
+    ax.plot(ks, train_acc, color="r")
+    ax.plot(ks, test_acc, color="b")
+    fig.savefig("images/elbow_map_kmeans_{}_{}.png".format(ds_name, func_name))
