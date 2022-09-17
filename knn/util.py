@@ -252,3 +252,5 @@ def min_dist(get_data_func, dist_func, is_min=True):
     print(train_acc)
     print(test_acc)
     return train_pred, train_labels, test_pred, test_labels
+
+def knn(get_data_fun
