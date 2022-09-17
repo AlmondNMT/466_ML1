@@ -28,4 +28,13 @@ def read_iris():
 
 if __name__ == "__main__":
     #kmeans_loop(read_iris, euclidean, "iris", "euclidean")
-    train_pred, train_labels, test_pred, test_labels = min_dist(read_iris, euclidean, True)
+    train_pred, train_labels, test_pred, test_labels = min_dist(read_iris, cosine, False)
+    le = LabelEncoder()
+    train_pred = le.fit_transform(train_pred)
+    train_labels = le.transform(train_labels)
+    test_pred = le.transform(test_pred)
+    test_labels = le.transform(test_labels)
+    conf_train = get_confusion_matrix(train_pred, train_labels)
+    conf_test = get_confusion_matrix(test_pred, test_labels)
+    print(conf_train)
+    print(conf_test)
