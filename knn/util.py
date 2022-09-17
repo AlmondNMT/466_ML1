@@ -189,6 +189,14 @@ def get_iris_label_string(label):
         return 'Iris-virginica'
     return -1
 
+def get_image(array):
+    """
+    pass a flat image pixel array and display the image
+    """
+    assert type(array) is np.ndarray, "array must be a numpy array"
+    img = Image.fromarray(np.array((255 * array).reshape(28, 28),
+        dtype=np.uint8), mode="L")
+    return img
 
 def kmeans_loop(get_data_func, dist_func, ds_name, func_name, is_min=True):
     attrs, labels = get_data_func()
