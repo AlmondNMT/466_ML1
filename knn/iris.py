@@ -1,3 +1,4 @@
+from xml.dom import pulldom
 import matplotlib.pyplot as plt
 import numpy as np
 import random
@@ -32,7 +33,7 @@ if __name__ == "__main__":
     train_avgs = get_averages(train_attrs, train_labels) # Problem 6
     test_avgs = get_averages(test_attrs, test_labels) # Problem 6
     ks = []
-    for k in range(1, 3 + 1):
+    for k in range(1, 15 + 1):
         ks.append(k)
         kmeans = KMeans(n_clusters=k)
         kmeans.fit(train_attrs)
@@ -41,3 +42,12 @@ if __name__ == "__main__":
             label_indices = np.where(kmeans.labels_ == j)[0]
             cluster_label = get_mode(train_labels[label_indices])
             centroids.append((kmeans.cluster_centers_[j], cluster_label))
+
+        labeled_data = predict_by_centroids(centroids, train_attrs, euclidean)
+        print("PREDICTION")
+        print(labeled_data)
+        accur = get_accuracy(labeled_data, train_labels)
+        print("FOR ACTUAL LABELS")
+        print(train_labels)
+        print("PERCENT")
+        print(accur)
