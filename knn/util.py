@@ -146,15 +146,18 @@ def visual_conf_mtrx(data): #visualizes confusion matrix, very basic as of now
     plt.show()
    
  
-def get_dist_predictions(centroids, attrs, labels):
-    eucl_pred = classify_k_means(centroids, attrs, euclidean, True)
-    manh_pred = classify_k_means(centroids, attrs, manhattan, True)
-    cos_pred = classify_k_means(centroids, attrs, cosine, False)
-    eucl_conf = get_confusion_matrix(eucl_pred, labels)
-    manh_conf = get_confusion_matrix(eucl_pred, labels)
-    cos_conf = get_confusion_matrix(cos_pred, labels)
-
-    return eucl_pred, manh_pred, cos_pred
+def get_dist_predictions(averages, attrs, labels):
+    centroids = avg_to_centroid(averages)
+    predictions = []
+    accuracies = []
+    confusion_matrices = []
+    distances = [euclidean, manhattan, cosine]
+    minimize_bools = [True, True, False]
+    for i, dist in enumerate(distances):
+        predictions.append(classify_k_means(centroids, attrs, dist, minimize_bools[i]))
+        accuracies.append(get_accuracy(predictions[i], labels))
+        confusion_matrices.append(get_confusion_matrix(predictions[i], labels))
+    return predictions, accuracies, confusion_matrices
 
 def get_accuracy(pred, actual):
     assert (len(pred)==len(actual)), "err get_accuracy: passed vectors need same length"
@@ -192,3 +195,4 @@ def get_iris_label_string(label):
         return 'Iris-virginica'
 
     return -1
+
