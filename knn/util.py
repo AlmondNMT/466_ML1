@@ -105,10 +105,9 @@ def predict_by_centroids(centroids, attrs, dist, is_min=True):
     distances = np.array(distances)
     centroid_labels = np.array(centroid_labels)
     if is_min:
-        return np.argmin(distances, axis=0)
+        return centroid_labels[np.argmin(distances, axis=0)]
     else:
-        return np.argmax(distances, axis=0)
-
+        return centroid_labels[np.argmax(distances, axis=0)]
 
 def avg_to_centroid(averages):
     """
@@ -125,13 +124,10 @@ def avg_to_centroid(averages):
 #It also REQUIRES that labels be all numbers starting at 0 and up to n, skipping none on the way. 
 def get_confusion_matrix(actual, pred):
     assert len(pred) == len(actual), "passed vectors must be same len"
-
     lc = len(set(actual)) #make count of labels
     matrix  = np.zeros((lc, lc))
-
     for i in range(0, len(actual)):
         matrix[actual[i]][pred[i]] += 1
-        
     return matrix
             
 def visual_conf_mtrx(data): #visualizes confusion matrix, very basic as of now
@@ -175,24 +171,18 @@ def get_MNIST_label(label):
 def get_iris_label(label):
     if(label == 'Iris-setosa'):
         return 0
-
     if(label == 'Iris-versicolor'):
         return 1
-
     if(label == 'Iris-virginica'):
         return 2
-
     return -1
 
 def get_iris_label_string(label):
     if(label == 0):
         return 'Iris-setosa'
-
     if(label == 1):
         return 'Iris-versicolor'
-
     if(label == 2):
         return 'Iris-virginica'
-
     return -1
 

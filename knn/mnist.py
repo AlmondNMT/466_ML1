@@ -113,3 +113,7 @@ if __name__ == "__main__":
     testing_averages = get_averages(testing_images, testing_labels)
     save_averages(training_averages, "train")
     save_averages(testing_averages, "test")
+    # For testing 
+    images = training_images[:10]
+    labels = training_labels[:10]
+    pred, acc, conf = get_dist_predictions(training_averages, images, labels)

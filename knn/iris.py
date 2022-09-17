@@ -28,12 +28,11 @@ def read_iris():
 
 if __name__ == "__main__":
     attrs, labels = read_iris()
-    labels, encoder = encode_labels(labels)
     train_attrs, train_labels, test_attrs, test_labels = get_train_test_split(attrs, labels, 0.5)
     train_avgs = get_averages(train_attrs, train_labels) # Problem 6
     test_avgs = get_averages(test_attrs, test_labels) # Problem 6
     ks = []
-    for k in range(1, 15 + 1):
+    for k in range(1, 3 + 1):
         ks.append(k)
         kmeans = KMeans(n_clusters=k)
         kmeans.fit(train_attrs)
