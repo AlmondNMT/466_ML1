@@ -10,6 +10,7 @@ import random
 import time
 from util import *
 
+
 # Image training data files
 directory = "data/"
 training_images_filename = "train-images-idx3-ubyte"
@@ -107,4 +108,4 @@ def save_averages(avg_dict, partition_name: str) -> None:
 
 
 if __name__ == "__main__":
-    train_pred, train_labels, test_pred, test_labels = min_dist(read_mnist, euclidean, True)
+    kmeans_loop(read_mnist, cosine,"mnist","cosine",True)

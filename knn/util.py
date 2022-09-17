@@ -5,6 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import random
 import time
+from PIL import Image
 """
 Useful functions shared by MNIST and Iris datasets
 """
@@ -225,6 +226,8 @@ def kmeans_loop(get_data_func, dist_func, ds_name, func_name, is_min=True):
             label_indices = np.where(kmeans_test.labels_ == j)[0]
             cluster_label = get_mode(test_labels[label_indices])
             centroids_test.append((kmeans_test.cluster_centers_[j], cluster_label))
+            get_image(centroids_train[j][0]).save(f"images/centroid_{func_name}_train_{k}_{j}.png")
+            get_image(centroids_train[j][0]).save(f"images/centroid_{func_name}_test_{k}_{j}.png"  )
 
         start = time.time()
         train_pred = predict_by_centroids(centroids_train, train_attrs, dist_func, is_min)
