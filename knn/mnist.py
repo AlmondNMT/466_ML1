@@ -109,11 +109,3 @@ def save_averages(avg_dict, partition_name: str) -> None:
 if __name__ == "__main__":
     images, labels = read_mnist()
     training_images, training_labels, testing_images, testing_labels = get_train_test_split(images, labels, split=0.5)
-    training_averages = get_averages(training_images, training_labels)
-    testing_averages = get_averages(testing_images, testing_labels)
-    save_averages(training_averages, "train")
-    save_averages(testing_averages, "test")
-    # For testing 
-    images = training_images[:10]
-    labels = training_labels[:10]
-    pred, acc, conf = get_dist_predictions(training_averages, images, labels)

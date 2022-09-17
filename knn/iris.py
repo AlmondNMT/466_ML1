@@ -9,7 +9,7 @@ Iris CSV Structure
 sepal length, sepal width, petal length, petal width
 """
 random.seed(1)
-
+plt.ion()
 def read_iris():
     """
     Pull csv data from data/iris.data
@@ -32,15 +32,30 @@ if __name__ == "__main__":
     train_avgs = get_averages(train_attrs, train_labels) # Problem 6
     test_avgs = get_averages(test_attrs, test_labels) # Problem 6
     ks = []
-    for k in range(1, 3 + 1):
+    train_acc = []
+    test_acc = []
+    for k in range(1, 15 + 1):
         ks.append(k)
-        kmeans = KMeans(n_clusters=k)
-        kmeans.fit(train_attrs)
-        centroids = []
+        kmeans_train = KMeans(n_clusters=k)
+        kmeans_train.fit(train_attrs)
+        kmeans_test = KMeans(n_clusters=k)
+        kmeans_test.fit(test_attrs)
+        centroids_train = []
+        centroids_test = []
         for j in range(0, k):
-            label_indices = np.where(kmeans.labels_ == j)[0]
+            label_indices = np.where(kmeans_train.labels_ == j)[0]
             cluster_label = get_mode(train_labels[label_indices])
-            centroids.append((kmeans.cluster_centers_[j], cluster_label))
-
-        labeled_data = predict_by_centroids(centroids, train_attrs, euclidean)
-        pred, acc, conf = get_dist_predictions(train_avgs, train_attrs, train_labels)
+            centroids_train.append((kmeans_train.cluster_centers_[j], cluster_label))
+            label_indices = np.where(kmeans_test.labels_ == j)[0]
+            cluster_label = get_mode(test_labels[label_indices])
+            centroids_test.append((kmeans_test.cluster_centers_[j], cluster_label))
+            
+        train_pred = predict_by_centroids(centroids_train, train_attrs, cosine, False)
+        test_pred = predict_by_centroids(centroids_test, test_attrs, cosine, False)
+        train_acc.append(get_accuracy(train_pred, train_labels))
+        test_acc.append(get_accuracy(test_pred, test_labels))
+    
+    fig, ax = plt.subplots()
+    ax.plot(ks, train_acc, color="r")
+    ax.plot(ks, test_acc, color="b")
+    fig.savefig("images/elbow_map_kmeans_iris_cosine.png")

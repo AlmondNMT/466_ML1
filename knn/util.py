@@ -153,10 +153,6 @@ def get_dist_predictions(averages, attrs, labels, is_iris=True):
             
     for i, dist in enumerate(distances):
         predictions.append(predict_by_centroids(centroids, attrs, dist, minimize_bools[i]))
-        if is_iris:
-            for j in range(len(labels)):
-                labels[j] = get_iris_label(labels[j])
-                predictions[i][j] = get_iris_label(predictions[i][j])
         accuracies.append(get_accuracy(predictions[i], labels))
         confusion_matrices.append(get_confusion_matrix(labels, predictions[i]))
     return predictions, accuracies, confusion_matrices
