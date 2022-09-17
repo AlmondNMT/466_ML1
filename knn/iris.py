@@ -9,10 +9,6 @@ sepal length, sepal width, petal length, petal width
 """
 random.seed(1)
 
-def get_iris_numbers(iris_labels):
-    iris_labels = list(set(iris_labels))
-    iris_map = dict(zip([i for i in range(len(iris_labels))], iris_labels))
-
 def read_iris():
     """
     Pull csv data from data/iris.data
@@ -36,7 +32,7 @@ if __name__ == "__main__":
     train_avgs = get_averages(train_attrs, train_labels) # Problem 6
     test_avgs = get_averages(test_attrs, test_labels) # Problem 6
     ks = []
-    for k in range(1, 2 + 1):
+    for k in range(1, 3 + 1):
         ks.append(k)
         kmeans = KMeans(n_clusters=k)
         kmeans.fit(train_attrs)

@@ -85,6 +85,7 @@ def cosine(u, v):
 
 def classify_k_means(centroids, attrs, dist, is_min=True):
     """
+    This is essentially the min-distance classification algo.
     :param attrs: feature vectors 
     :param centroids: list of 2-tuples of k-means centroids and their 
         corresponding labels based on voting
@@ -107,6 +108,18 @@ def classify_k_means(centroids, attrs, dist, is_min=True):
         return np.argmin(distances, axis=0)
     else:
         return np.argmax(distances, axis=0)
+
+
+def avg_to_centroid(averages):
+    """
+    Take the average value obtained from get averages and convert it into the 
+    form needed for classify_k_means, i.e. [(average, label), ...]
+    """
+    assert type(averages) is dict
+    centroids = []
+    for label in averages:
+        centroids.append((averages[label][0], label))
+    return centroids
 
 #NOTE: This REQUIRES that both arrays be in the form that all labels are numbers, not strings.
 #It also REQUIRES that labels be all numbers starting at 0 and up to n, skipping none on the way. 
@@ -133,7 +146,6 @@ def visual_conf_mtrx(data): #visualizes confusion matrix, very basic as of now
     plt.show()
    
  
-
 def get_dist_predictions(centroids, attrs, labels):
     eucl_pred = classify_k_means(centroids, attrs, euclidean, True)
     manh_pred = classify_k_means(centroids, attrs, manhattan, True)
