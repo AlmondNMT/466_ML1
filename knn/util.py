@@ -161,7 +161,7 @@ def get_accuracy(pred, actual):
     count = 0
     for i in range(0, len(pred)):
         if(pred[i]==actual[i]):
-            count = cout + 1
+            count = count + 1
 
     return count/len(pred)
 
@@ -178,5 +178,17 @@ def get_iris_label(label):
 
     if(label == 'Iris-virginica'):
         return 2
+
+    return -1
+
+def get_iris_label_string(label):
+    if(label == 0):
+        return 'Iris-setosa'
+
+    if(label == 1):
+        return 'Iris-versicolor'
+
+    if(label == 2):
+        return 'Iris-virginica'
 
     return -1
