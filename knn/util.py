@@ -1,4 +1,5 @@
 from sklearn.cluster import KMeans
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.preprocessing import LabelBinarizer
 from sklearn.preprocessing import LabelEncoder
 import numpy as np
@@ -126,7 +127,6 @@ def avg_to_centroid(averages):
 #It also REQUIRES that labels be all numbers starting at 0 and up to n, skipping none on the way. 
 def get_confusion_matrix(actual, pred):
     assert len(pred) == len(actual), "passed vectors must be same len"
-    print(actual)
     lc = len(set(actual)) #make count of labels
     matrix  = np.zeros((lc, lc))
     for i in range(0, len(actual)):
@@ -256,4 +256,22 @@ def min_dist(get_data_func, dist_func, is_min=True):
     print(test_acc)
     return train_pred, train_labels, test_pred, test_labels
 
-def knn(get_data_fun
+def knn(get_data_func):
+    attrs, labels = get_data_func()
+    train_attrs, train_labels, test_attrs, test_labels = get_train_test_split(attrs, labels)
+    distances = ["euclidean", "manhattan", "cosine"]
+    le = LabelEncoder()
+    le.fit_transform(labels)
+    ks = [1, 5, 10]
+    for dist in distances:
+        accs = []
+        print("Distance metric: %s" % dist)
+        for i in ks:
+            knn = KNeighborsClassifier(n_neighbors=i, metric=dist)
+            knn.fit(train_attrs, train_labels)
+            pred = knn.predict(test_attrs)
+            acc = knn.score(test_attrs, test_labels)
+            accs.append(acc)
+            print(f"KNN k={i}, score={acc}")
+            print("\tConf\n{}".format(get_confusion_matrix(le.transform(pred), le.transform(test_labels))))
+    
