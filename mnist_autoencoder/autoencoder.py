@@ -29,7 +29,7 @@ def find_digits(actual, pred, labels):
     pred_dir = "saved_images/predicted"
     actual_dir = "saved_images/actual"
     while sum(counts.values()) < 10:
-        print(sum(counts.values()))
+        print(counts)
         label = labels[np.random.randint(0, len(labels))]
         index = np.argmax(label)
         if counts[index] < 1:
@@ -44,12 +44,14 @@ def find_digits(actual, pred, labels):
         pred.save(os.path.join(pred_dir, label + ".png"))
 
 if __name__ == "__main__":
-    model = build_model(5)
-    if not os.path.isfile("model.pb"):
+    latent_units = 5
+    model = build_model(latent_units)
+    f_string = f"latent_{latent_units}"
+    if not os.path.isdir(f_string):
         model.fit(X_train, X_train, batch_size=40, epochs=2, validation_split=0.2, shuffle=True)
-        model.save_model(".")
+        model.save(f_string)
     else:
-        model = tf.keras.models.load_model("model.pb")
+        model = tf.keras.models.load_model(f_string)
 
 
     # Model accuracy
