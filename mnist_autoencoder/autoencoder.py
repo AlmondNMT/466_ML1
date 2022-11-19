@@ -55,7 +55,7 @@ if __name__ == "__main__":
 
 
     # Model accuracy
-    model.evaluate(X_test, y_test)
+    model.evaluate(X_test, X_test)
 
     # Prediction
     pred = model.predict(X_test)
