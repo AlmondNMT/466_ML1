@@ -46,7 +46,7 @@ def find_digits(actual, pred, labels, latent_units):
         pred.save(os.path.join(pred_dir, label + ".png"))
 
 if __name__ == "__main__":
-    latent_units = 10
+    latent_units = 20
     model = build_model(latent_units)
     f_string = f"latent_{latent_units}"
     if not os.path.isdir(f_string):
