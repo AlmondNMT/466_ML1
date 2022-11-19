@@ -3,7 +3,7 @@ import os
 import pandas as pd
 from PIL import Image
 import tensorflow as tf
-from tensorflow.keras.layers import Conv2D, Dense, MaxPool2D, Flatten, Reshape
+from tensorflow.python.keras.layers import Conv2D, Dense, MaxPool2D, Flatten, Reshape
 
 (X_train, y_train), (X_test, y_test) = tf.keras.datasets.mnist.load_data()
 X_train = X_train.reshape(X_train.shape[0], 28, 28, 1) / 255.0
