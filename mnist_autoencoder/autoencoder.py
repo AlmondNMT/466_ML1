@@ -22,12 +22,13 @@ def build_model(latent_units):
     model.compile(optimizer="adam", metrics=["accuracy"], loss="MSE")
     return model
 
-def find_digits(actual, pred, labels):
+def find_digits(actual, pred, labels, latent_units):
     counts = dict(zip([i for i in range(10)], [0 for i in range(10)]))
     actual_images = []
     pred_images = []
-    pred_dir = "saved_images/predicted"
-    actual_dir = "saved_images/actual"
+    root_dir = os.path.join("saved_images", "latent_" + latent_units)
+    pred_dir = os.path.join(root_dir, "predicted")
+    actual_dir = os.path.join(root_dir, "actual")
     while sum(counts.values()) < 10:
         index = np.random.randint(0, len(labels))
         label = labels[index]
