@@ -26,7 +26,7 @@ def find_digits(actual, pred, labels, latent_units):
     counts = dict(zip([i for i in range(10)], [0 for i in range(10)]))
     actual_images = []
     pred_images = []
-    root_dir = os.path.join("saved_images", "latent_" + latent_units)
+    root_dir = os.path.join("saved_images", "latent_" + str(latent_units))
     pred_dir = os.path.join(root_dir, "predicted")
     actual_dir = os.path.join(root_dir, "actual")
     while sum(counts.values()) < 10:
@@ -46,7 +46,7 @@ def find_digits(actual, pred, labels, latent_units):
         pred.save(os.path.join(pred_dir, label + ".png"))
 
 if __name__ == "__main__":
-    latent_units = 5
+    latent_units = 10
     model = build_model(latent_units)
     f_string = f"latent_{latent_units}"
     if not os.path.isdir(f_string):
@@ -63,4 +63,4 @@ if __name__ == "__main__":
     pred = model.predict(X_test)
 
     print(model.summary())
-    find_digits(X_test, pred, y_test)
+    find_digits(X_test, pred, y_test, latent_units)
