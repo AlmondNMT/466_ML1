@@ -29,15 +29,16 @@ def find_digits(actual, pred, labels):
     pred_dir = "saved_images/predicted"
     actual_dir = "saved_images/actual"
     while sum(counts.values()) < 10:
-        print(counts)
-        label = labels[np.random.randint(0, len(labels))]
-        index = np.argmax(label)
-        if counts[index] < 1:
-            counts[index] += 1
-            actual_images.append((index, actual[label]))
-            pred_images.append(actual[label])
+        index = np.random.randint(0, len(labels))
+        label = labels[index]
+        print(index)
+        if counts[label] < 1:
+            counts[label] += 1
+            actual_images.append((label, actual[index]))
+            pred_images.append(pred[index])
     for i in range(len(actual_images)):
         label, actual_image_data = actual_images[i]
+        label = str(int(label))
         actual = Image.fromarray(actual_image_data.reshape(28, 28) * 255).convert("L").resize((100, 100), Image.Resampling.BICUBIC)
         actual.save(os.path.join(actual_dir, label + ".png"))
         pred = Image.fromarray(pred_images[i].reshape(28, 28) * 255).convert("L").resize((100, 100), Image.Resampling.BICUBIC)
