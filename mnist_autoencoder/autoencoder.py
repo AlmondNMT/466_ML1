@@ -5,6 +5,7 @@ from PIL import Image
 import tensorflow as tf
 from tensorflow.python.keras import Model
 from tensorflow.python.keras.layers import Conv2D, Dense, MaxPool2D, Flatten, Reshape, Input
+import time
 
 (X_train, y_train), (X_test, y_test) = tf.keras.datasets.mnist.load_data()
 X_train = X_train.reshape(X_train.shape[0], 28, 28, 1) / 255.0
@@ -61,7 +62,10 @@ if __name__ == "__main__":
     model = build_model(latent_units)
     f_string = f"latent_{latent_units}"
     if not os.path.isdir(f_string):
+        start = time.time()
         model.fit(X_train, X_train, batch_size=40, epochs=2, validation_split=0.2, shuffle=True)
+        elapsed = time.time() - start
+        print(elapsed)
         model.save(f_string)
     else:
         model = tf.keras.models.load_model(f_string)
