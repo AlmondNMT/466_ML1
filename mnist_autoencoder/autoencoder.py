@@ -3,7 +3,8 @@ import os
 import pandas as pd
 from PIL import Image
 import tensorflow as tf
-from tensorflow.python.keras.layers import Conv2D, Dense, MaxPool2D, Flatten, Reshape
+from tensorflow.python.keras import Model
+from tensorflow.python.keras.layers import Conv2D, Dense, MaxPool2D, Flatten, Reshape, Input
 
 (X_train, y_train), (X_test, y_test) = tf.keras.datasets.mnist.load_data()
 X_train = X_train.reshape(X_train.shape[0], 28, 28, 1) / 255.0
@@ -11,14 +12,24 @@ X_test = X_test.reshape(X_test.shape[0], 28, 28, 1) / 255.0
 
 
 def build_model(latent_units):
-    model = tf.keras.models.Sequential()
-    model.add(Conv2D(64, (5, 5), input_shape=(28, 28, 1), activation="relu"))
-    model.add(MaxPool2D((2, 2)))
-    model.add(Conv2D(60, (5, 5), activation="relu"))
-    model.add(Flatten())
-    model.add(Dense(latent_units, activation="relu"))
-    model.add(Dense(28 * 28, activation="sigmoid"))
-    model.add(Reshape((28, 28, 1), input_shape=(28 ** 2,)))
+    img = Input(shape=(28, 28, 1))
+    encoder = tf.keras.models.Sequential()
+    encoder.add(Conv2D(64, (5, 5), input_shape=(28, 28, 1), activation="relu"))
+    encoder.add(MaxPool2D((2, 2)))
+    encoder.add(Conv2D(60, (5, 5), activation="relu"))
+    encoder.add(Flatten())
+    encoder.add(Dense(latent_units, activation="relu"))
+    #encoder.add(Dense(28 * 28, activation="sigmoid"))
+    #encoder.add(Reshape((28, 28, 1), input_shape=(28 ** 2,)))
+    # encoder.compile(optimizer="adam", metrics=["accuracy"], loss="MSE")
+
+    decoder = tf.keras.models.Sequential()
+    decoder.add(Dense(latent_units * 2, activation="relu"))
+    decoder.add(Dense(28 * 28, activation="sigmoid"))
+    decoder.add(Reshape((28, 28, 1)))
+    latent = encoder(img)
+    output = decoder(latent)
+    model = Model(inputs = img, outputs = output)
     model.compile(optimizer="adam", metrics=["accuracy"], loss="MSE")
     return model
 
